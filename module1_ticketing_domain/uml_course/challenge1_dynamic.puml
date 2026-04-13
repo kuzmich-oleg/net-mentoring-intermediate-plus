@@ -1,0 +1,33 @@
+@startuml eventBookingDynamic
+actor EventOrganizer
+participant BookingService
+participant VenueCareTaker
+participant ParkingManager
+database Db
+
+EventOrganizer -> EventOrganizer : create request
+EventOrganizer -> BookingService : submit request
+
+BookingService -> VenueCareTaker : request Approval
+alt Date available
+    VenueCareTaker -> BookingService : approves
+else Date already booked
+    VenueCareTaker -> BookingService : rejects
+end
+
+BookingService -> ParkingManager : request Approval
+alt Places available
+    ParkingManager -> BookingService : approves
+else Not enough places
+    ParkingManager -> BookingService : rejects
+end
+
+BookingService -> BookingService : validate approvals
+alt at least 1 failed
+    BookingService -> EventOrganizer : return error
+else both approved
+    BookingService -> Db : save event
+    BookingService -> EventOrganizer : return event details
+end
+
+@enduml

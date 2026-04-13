@@ -1,0 +1,28 @@
+@startuml eventBookingState
+hide empty description
+
+[*] --> Created : Request creation
+
+state fork_state <<fork>>
+
+Created --> fork_state
+
+VenueApproval --> Rejected : not approved
+
+fork_state --> VenueApproval
+
+fork_state --> ParkingApproval
+
+state join_state <<join>>
+
+VenueApproval --> join_state : approved
+
+ParkingApproval --> join_state : approved
+
+Rejected --> [*]
+
+join_state --> Confirmed
+
+Confirmed --> [*]
+
+@enduml

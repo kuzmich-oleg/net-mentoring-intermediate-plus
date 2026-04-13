@@ -1,0 +1,31 @@
+@startuml seatStatus
+hide empty description
+
+[*] -right-> Available
+Available : Initial status after event confirmation
+
+Available -down-> Booked
+
+state Booked {
+    [*] -> AwaitingForPayment
+    
+    state PaymentStatus <<choice>>
+    
+    AwaitingForPayment -right-> PaymentStatus
+    
+    PaymentStatus -up-> Available : payment failed
+}
+
+PaymentStatus -down-> Sold : payment completed
+
+state Sold {
+    [*] -right-> PaymentConfirmed
+    
+    PaymentConfirmed -right[dashed]-> PaymentCancelled : optional
+}
+
+PaymentConfirmed --> [*]
+
+PaymentCancelled -[dashed]-> Available : optional
+
+@enduml

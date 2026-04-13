@@ -1,0 +1,45 @@
+@startuml eventBooking
+class Venue{
+ -int id
+ -string name
+ -int maxAudienceSize
+ -Event[] events
+ -int parkingId
+ +string GetName()
+}
+
+class Event{
+ -int id
+ -int venueId
+ -EventType type
+ -string name
+ -DateTimeOffset dateTime
+ -int durationInHours
+ -int audienceSize
+ +string GetName()
+}
+
+class Parking{
+ -int venueId
+ -int placesNumber
+ +int GetPlacesNumber()
+}
+
+record EventRequest{
+ +string venueName
+ +EventType type
+ +string name
+ +DateTimeOffset dateTime
+ +int durationInHours
+ +int audienceSize
+}
+
+enum EventType{
+ Public
+ Private
+}
+
+Venue *-- "many" Event
+Venue *-- "one" Parking
+
+@enduml

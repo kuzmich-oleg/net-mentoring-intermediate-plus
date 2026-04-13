@@ -1,0 +1,100 @@
+@startuml BuySeat
+/'
+    Task 3 Draw a sequence diagram for
+    buying a seat of a lowest price
+    (includes finding available seats logic)
+    
+    Note: for simplicity interaction with DB
+    and Auth proccess are not shown
+    
+    
+    also in real projects it;s better to split read/write services,
+    but for simplicity we there is one service for each domain
+'/
+
+actor Customer
+
+box "TicketService"
+    participant EventsService
+    participant SeatsService
+    participant CartService
+    participant OrdersService
+    participant TicketsService
+end box
+
+participant PaymentService
+participant NotificationService
+
+Customer -> EventsService : get events list
+activate EventsService
+EventsService --> Customer : events list
+deactivate EventsService
+
+Customer -> EventsService : get event details
+activate EventsService
+    EventsService -> SeatsService : get seats availability
+    activate SeatsService
+    SeatsService --> EventsService : seats details
+    deactivate SeatsService
+EventsService --> Customer : details
+deactivate EventsService
+
+Customer -> CartService : add seat into cart
+activate CartService
+    CartService -> CartService : create cart
+    CartService -> SeatsService : book seats
+    activate SeatsService
+        SeatsService --> CartService : confirmation
+    deactivate SeatsService
+    CartService -> CartService : add booked seat/s
+    CartService --> Customer : cart details
+deactivate CartService
+
+Customer -> OrdersService : create order from cart
+activate OrdersService
+    OrdersService -> CartService : get cart details
+    activate CartService
+    CartService --> OrdersService : cart details
+    deactivate CartService
+OrdersService -> OrdersService : create order
+OrdersService --> Customer : order details
+deactivate OrdersService
+
+Customer -> OrdersService : payment details
+activate OrdersService
+    opt CardPaymentType
+        OrdersService -> PaymentService : validate card details
+        PaymentService --> OrdersService : validation result
+    end
+    alt Validation is required but failed
+        OrdersService --> Customer : error message
+    else Validation is not required or passed
+        OrdersService -> PaymentService : create payment
+        PaymentService --> OrdersService : payment request accepted
+        OrdersService --> Customer : Processing payment message
+    end
+deactivate OrdersService
+
+PaymentService -> OrdersService : Payment result 
+activate OrdersService
+    OrdersService -> OrdersService : complete order
+    OrdersService ->> NotificationService : enqueue payment confirmation message
+    OrdersService ->> TicketsService : create Ticket
+deactivate OrdersService
+activate TicketsService
+
+TicketsService -> TicketsService : ticket created
+TicketsService ->> NotificationService : enqueue Ticket mesage
+deactivate TicketsService
+
+NotificationService -> NotificationService : dequeue payment message
+NotificationService ->> Customer : Payment Confirmation
+
+NotificationService -> NotificationService : dequeue ticket message
+NotificationService -> TicketsService : get ticket details
+activate TicketsService
+    TicketsService --> NotificationService : ticket details
+deactivate TicketsService
+NotificationService ->> Customer : Generated Ticket
+
+@enduml
