@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/SolutionFolder/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="src/TicketingSystem.Application/TicketingSystem.Application.csproj" />
+  <Project Path="src/TicketingSystem.Common/TicketingSystem.Common.csproj" />
+  <Project Path="src/TicketingSystem.DataAccess/TicketingSystem.DataAccess.csproj" />
+  <Project Path="src/TicketingSystem.Domain/TicketingSystem.Domain.csproj" />
+  <Project Path="src/TicketingSystem.WebAPI/TicketingSystem.WebAPI.csproj" />
+</Solution>
