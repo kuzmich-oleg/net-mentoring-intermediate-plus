@@ -14,6 +14,7 @@ internal sealed class SeatPriceLevelEntityConfiguration : IEntityTypeConfigurati
 
         builder
             .HasIndex(x => x.PriceLevel)
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
     }
 }

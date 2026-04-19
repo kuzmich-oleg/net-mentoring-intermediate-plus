@@ -19,7 +19,8 @@ internal sealed class SectionRowEntityConfiguration : IEntityTypeConfiguration<S
 
         builder
             .HasIndex(x => new { x.SectionId, x.Code })
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
 
         builder
             .HasOne(x => x.Section)

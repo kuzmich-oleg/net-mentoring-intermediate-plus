@@ -21,7 +21,8 @@ internal sealed class EventEntityConfiguration : IEntityTypeConfiguration<EventE
 
         builder
             .Property(x => x.Description)
-            .IsRequired();
+            .IsRequired()
+            .HasMaxLength(DbConstants.ShortTextMaxLength);
 
         builder
             .Property(x => x.EventDate)

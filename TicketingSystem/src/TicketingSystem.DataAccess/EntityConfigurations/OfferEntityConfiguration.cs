@@ -37,6 +37,7 @@ internal sealed class OfferEntityConfiguration : IEntityTypeConfiguration<OfferE
 
         builder
             .HasIndex(x => new { x.SeatId, x.EventId, x.SeatPriceLevelId })
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
     }
 }

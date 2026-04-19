@@ -26,6 +26,7 @@ internal sealed class TicketEntityConfiguration : IEntityTypeConfiguration<Ticke
 
         builder
             .HasIndex(x => new { x.CustomerId, x.OfferId })
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
     }
 }

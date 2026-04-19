@@ -18,7 +18,8 @@ internal sealed class SeatEntityConfiguration : IEntityTypeConfiguration<SeatEnt
 
         builder
             .HasIndex(x => new { x.SectionRowId, x.SeatNumber })
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
 
         builder
             .HasOne(x => x.SectionRow)
