@@ -8,5 +8,9 @@ internal sealed class TicketEntity : AuditableEntityBase
 
     public Guid OfferId { get; set; }
 
+    public Guid OrderId { get; set; }
+
     public OfferEntity? Offer { get; set; }
+
+    public OrderEntity? Order { get; set; }
 }

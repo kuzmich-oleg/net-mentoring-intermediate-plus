@@ -21,5 +21,7 @@ internal sealed class UserEntityConfiguration : IEntityTypeConfiguration<UserEnt
             .HasIndex(x => x.Email)
             .IsUnique()
             .HasFilter("[IsDeleted] = 0");
+
+        builder.HasData(SeedData.Users.DefaultUsers);
     }
 }

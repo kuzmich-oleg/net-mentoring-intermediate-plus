@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TicketingSystem.DataAccess.Entities;
 using TicketingSystem.DataAccess.Mappers;
-using TicketingSystem.Domain.Interfaces.Repositories;
+using TicketingSystem.Application.Interfaces.Repositories;
 using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.Repositories.Customers;
@@ -21,7 +21,7 @@ internal sealed class CustomerWriteRepository : ICustomerWriteRepository
 
         customerEntity.Id = Guid.NewGuid();
 
-        await _dbContext.Customers.AddAsync(customerEntity, cancellationToken);
+        _dbContext.Customers.Add(customerEntity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

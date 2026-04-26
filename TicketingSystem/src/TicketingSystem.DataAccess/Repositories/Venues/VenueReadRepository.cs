@@ -2,7 +2,7 @@
 using TicketingSystem.Common.Extensions;
 using TicketingSystem.DataAccess.Entities;
 using TicketingSystem.DataAccess.Mappers;
-using TicketingSystem.Domain.Interfaces.Repositories;
+using TicketingSystem.Application.Interfaces.Repositories;
 using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.Repositories.Venues;
@@ -23,6 +23,7 @@ internal sealed class VenueReadRepository : IVenueReadRepository
     {
         var venueEntity = await ActiveVenues
             .AsNoTracking()
+            .AsSplitQuery()
             .Include(x => x.Sections.Where(x => !x.IsDeleted))
             .ThenInclude(x => x.Rows.Where(x => !x.IsDeleted))
             .ThenInclude(x => x.Seats.Where(x => !x.IsDeleted))

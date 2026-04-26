@@ -13,13 +13,14 @@ using TicketingSystem.DataAccess.Repositories.Offers;
 using TicketingSystem.DataAccess.Repositories.Tickets;
 using TicketingSystem.DataAccess.Repositories.Users;
 using TicketingSystem.DataAccess.Repositories.Venues;
-using TicketingSystem.Domain.Interfaces.Repositories;
+using TicketingSystem.Application.Interfaces.Repositories;
+using TicketingSystem.DataAccess.Repositories.Carts;
 
 namespace TicketingSystem.DataAccess.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDataAccess(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection RegisterDataAccess(this IServiceCollection services, IConfiguration configuration)
     {
         services.RegisterTicketingDbContext(configuration);
         
@@ -85,6 +86,9 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ITicketReadRepository, TicketReadRepository>();
         services.AddScoped<ITicketWriteRepository, TicketWriteRepository>();
+
+        services.AddScoped<ICartReadRepository, CartReadRepository>();
+        services.AddScoped<ICartWriteRepository, CartWriteRepository>();
 
         return services;
     }

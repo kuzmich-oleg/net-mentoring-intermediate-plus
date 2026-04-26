@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TicketingSystem.DataAccess.Entities;
+using TicketingSystem.DataAccess.SeedData;
+using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.EntityConfigurations;
 
@@ -18,8 +20,12 @@ internal sealed class OfferEntityConfiguration : IEntityTypeConfiguration<OfferE
             .HasColumnType("decimal(18,2)");
 
         builder
+            .Property(x => x.SeatStatus)
+            .HasDefaultValue(SeatStatus.Available);
+
+        builder
             .HasOne(x => x.Event)
-            .WithMany()
+            .WithMany(x => x.Offers)
             .HasForeignKey(x => x.EventId)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -39,5 +45,7 @@ internal sealed class OfferEntityConfiguration : IEntityTypeConfiguration<OfferE
             .HasIndex(x => new { x.SeatId, x.EventId, x.SeatPriceLevelId })
             .IsUnique()
             .HasFilter("[IsDeleted] = 0");
+
+        builder.HasData(Offers.DefaultOffers);
     }
 }

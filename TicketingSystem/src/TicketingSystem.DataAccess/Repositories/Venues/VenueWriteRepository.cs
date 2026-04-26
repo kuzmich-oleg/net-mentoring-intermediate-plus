@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TicketingSystem.DataAccess.Entities;
 using TicketingSystem.DataAccess.Mappers;
-using TicketingSystem.Domain.Interfaces.Repositories;
+using TicketingSystem.Application.Interfaces.Repositories;
 using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.Repositories.Venues;
@@ -21,7 +21,7 @@ internal sealed class VenueWriteRepository : IVenueWriteRepository
 
         venueEntity.Id = Guid.NewGuid();
 
-        await _dbContext.Venues.AddAsync(venueEntity, cancellationToken);
+        _dbContext.Venues.Add(venueEntity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

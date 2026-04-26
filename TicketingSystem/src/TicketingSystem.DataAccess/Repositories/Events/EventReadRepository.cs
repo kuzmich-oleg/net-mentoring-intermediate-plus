@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TicketingSystem.Application.Interfaces.Repositories;
+using TicketingSystem.Common;
 using TicketingSystem.Common.Extensions;
 using TicketingSystem.DataAccess.Entities;
+using TicketingSystem.DataAccess.Extensions;
 using TicketingSystem.DataAccess.Mappers;
-using TicketingSystem.Domain.Interfaces.Repositories;
 using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.Repositories.Events;
@@ -23,15 +25,20 @@ internal sealed class EventReadRepository : IEventReadRepository
     {
         var eventEntity = await ActiveEvents
             .AsNoTracking()
+            .AsSplitQuery()
             .Include(x => x.Venue)
+                .ThenInclude(x => x!.Sections.Where(x => !x.IsDeleted))
+            .Where(x => !x.Venue!.IsDeleted)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         var eventModel = eventEntity.MapIfNotNull(EventMapper.FromEntity);
         return eventModel;
     }
 
-    public async Task<IReadOnlyCollection<Event>> GetEventsAsync(
+    public async Task<PagedResult<Event>> GetEventsAsync(
+        string? namePart,
         DateTimeOffset? eventDate,
+        OffsetPage offsetPage,
         CancellationToken cancellationToken)
     {
         var query = ActiveEvents
@@ -44,10 +51,21 @@ internal sealed class EventReadRepository : IEventReadRepository
             query = query.Where(x => x.EventDate.Date == eventDate.Value.Date);
         }
 
-        var eventEntities = await query.ToListAsync(cancellationToken);
+        if (!string.IsNullOrEmpty(namePart))
+        {
+            var pattern = $"%{namePart}%";
+            query = query.Where(x => EF.Functions.Like(x.Name, pattern));
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var eventEntities = await query
+            .OrderBy(x => x.EventDate)
+            .ApplyPaging(offsetPage)
+            .ToListAsync(cancellationToken);
 
         var eventModels = eventEntities.MapToList(EventMapper.FromEntity);
 
-        return eventModels;
+        return new PagedResult<Event>(totalCount, offsetPage, eventModels);
     }
 }

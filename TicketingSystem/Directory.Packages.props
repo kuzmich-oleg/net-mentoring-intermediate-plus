@@ -14,5 +14,6 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.6" />
     <!-- Core Libraries -->
     <PackageVersion Include="Riok.Mapperly" Version="4.3.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
   </ItemGroup>
 </Project>

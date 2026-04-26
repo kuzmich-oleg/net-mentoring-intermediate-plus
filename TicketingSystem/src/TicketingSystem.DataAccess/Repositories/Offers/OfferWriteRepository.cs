@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TicketingSystem.DataAccess.Entities;
 using TicketingSystem.DataAccess.Mappers;
-using TicketingSystem.Domain.Interfaces.Repositories;
+using TicketingSystem.Application.Interfaces.Repositories;
 using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.Repositories.Offers;
@@ -21,7 +21,7 @@ internal sealed class OfferWriteRepository : IOfferWriteRepository
 
         offerEntity.Id = Guid.NewGuid();
 
-        await _dbContext.Offers.AddAsync(offerEntity, cancellationToken);
+        _dbContext.Offers.Add(offerEntity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

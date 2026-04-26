@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TicketingSystem.DataAccess.Entities;
 using TicketingSystem.DataAccess.Mappers;
-using TicketingSystem.Domain.Interfaces.Repositories;
+using TicketingSystem.Application.Interfaces.Repositories;
 using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.Repositories.EventManagers;
@@ -21,7 +21,7 @@ internal sealed class EventManagerWriteRepository : IEventManagerWriteRepository
 
         eventManagerEntity.Id = Guid.NewGuid();
 
-        await _dbContext.EventManagers.AddAsync(eventManagerEntity, cancellationToken);
+        _dbContext.EventManagers.Add(eventManagerEntity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

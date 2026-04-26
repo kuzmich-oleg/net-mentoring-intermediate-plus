@@ -1,4 +1,5 @@
 ﻿using TicketingSystem.DataAccess.Entities.Abstractions;
+using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.Entities;
 
@@ -11,6 +12,8 @@ internal sealed class OfferEntity : AuditableEntityBase
     public Guid SeatPriceLevelId { get; set; }
 
     public decimal Price { get; set; }
+
+    public SeatStatus SeatStatus { get; set; }
 
     public EventEntity? Event { get; set; }
 

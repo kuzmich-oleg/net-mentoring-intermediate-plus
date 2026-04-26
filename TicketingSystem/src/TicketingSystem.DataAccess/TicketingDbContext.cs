@@ -20,6 +20,7 @@ public sealed class TicketingDbContext(DbContextOptions<TicketingDbContext> opti
     internal DbSet<SeatPriceLevelEntity> SeatPriceLevels => Set<SeatPriceLevelEntity>();
     internal DbSet<OfferEntity> Offers => Set<OfferEntity>();
     internal DbSet<TicketEntity> Tickets => Set<TicketEntity>();
+    internal DbSet<CartEntity> Carts => Set<CartEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

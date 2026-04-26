@@ -13,4 +13,6 @@ internal sealed class EventEntity : AuditableEntityBase
     public DateTimeOffset EventDate { get; set; }
 
     public VenueEntity? Venue { get; set; }
+
+    public IList<OfferEntity> Offers { get; set; } = [];
 }

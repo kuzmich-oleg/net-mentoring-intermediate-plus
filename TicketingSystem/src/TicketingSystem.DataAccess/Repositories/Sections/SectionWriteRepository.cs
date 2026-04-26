@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TicketingSystem.DataAccess.Entities;
 using TicketingSystem.DataAccess.Mappers;
-using TicketingSystem.Domain.Interfaces.Repositories;
+using TicketingSystem.Application.Interfaces.Repositories;
 using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.Repositories.Sections;
@@ -21,7 +21,7 @@ internal sealed class SectionWriteRepository : ISectionWriteRepository
 
         sectionEntity.Id = Guid.NewGuid();
 
-        await _dbContext.Sections.AddAsync(sectionEntity, cancellationToken);
+        _dbContext.Sections.Add(sectionEntity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

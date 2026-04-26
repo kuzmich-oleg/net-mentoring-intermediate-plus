@@ -1,4 +1,4 @@
-namespace TicketingSystem.Domain.Models;
+﻿namespace TicketingSystem.Domain.Models;
 
 public sealed record Ticket : DomainModelBase
 {
@@ -8,7 +8,11 @@ public sealed record Ticket : DomainModelBase
 
     public Guid OfferId { get; set; }
 
+    public Guid OrderId { get; set; }
+
     public Event? Event { get; set; }
 
     public Offer? Offer { get; set; }
+
+    public Order? Order { get; set; }
 }

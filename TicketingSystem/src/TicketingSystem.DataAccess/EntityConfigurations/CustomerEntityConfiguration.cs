@@ -27,5 +27,7 @@ internal sealed class CustomerEntityConfiguration : IEntityTypeConfiguration<Cus
             .WithOne()
             .HasForeignKey<CustomerEntity>(x => x.UserId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasData(SeedData.Customers.DefaultCustomers);
     }
 }

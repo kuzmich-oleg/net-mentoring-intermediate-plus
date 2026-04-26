@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TicketingSystem.DataAccess.Entities;
+using TicketingSystem.DataAccess.SeedData;
 
 namespace TicketingSystem.DataAccess.EntityConfigurations;
 
@@ -27,5 +28,7 @@ internal sealed class SectionRowEntityConfiguration : IEntityTypeConfiguration<S
             .WithMany(x => x.Rows)
             .HasForeignKey(x => x.SectionId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasData(SectionRows.DefaultRows);
     }
 }

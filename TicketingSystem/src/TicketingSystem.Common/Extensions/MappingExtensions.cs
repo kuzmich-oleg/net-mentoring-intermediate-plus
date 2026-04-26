@@ -10,5 +10,10 @@ public static class MappingExtensions
     public static List<TResult> MapToList<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> mapFunc)
         where TSource : class
         where TResult : class
-        => source.Select(mapFunc).ToList();
+        => [.. source.Select(mapFunc)];
+
+    public static TResult[] MapToArray<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> mapFunc)
+        where TSource : class
+        where TResult : class
+        => [.. source.Select(mapFunc)];
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TicketingSystem.DataAccess.Entities;
+using TicketingSystem.DataAccess.SeedData;
 
 namespace TicketingSystem.DataAccess.EntityConfigurations;
 
@@ -16,5 +17,7 @@ internal sealed class SeatPriceLevelEntityConfiguration : IEntityTypeConfigurati
             .HasIndex(x => x.PriceLevel)
             .IsUnique()
             .HasFilter("[IsDeleted] = 0");
+
+        builder.HasData(SeatPriceLevels.DefaultSeatPriceLevels);
     }
 }

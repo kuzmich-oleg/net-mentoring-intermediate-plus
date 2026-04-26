@@ -25,6 +25,12 @@ internal sealed class TicketEntityConfiguration : IEntityTypeConfiguration<Ticke
             .OnDelete(DeleteBehavior.NoAction);
 
         builder
+            .HasOne(x => x.Order)
+            .WithMany()
+            .HasForeignKey(x => x.OrderId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder
             .HasIndex(x => new { x.CustomerId, x.OfferId })
             .IsUnique()
             .HasFilter("[IsDeleted] = 0");

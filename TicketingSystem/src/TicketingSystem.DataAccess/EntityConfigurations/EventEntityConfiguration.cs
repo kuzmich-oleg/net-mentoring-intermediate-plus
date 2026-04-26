@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TicketingSystem.DataAccess.Entities;
+using TicketingSystem.DataAccess.SeedData;
 
 namespace TicketingSystem.DataAccess.EntityConfigurations;
 
@@ -11,8 +12,6 @@ internal sealed class EventEntityConfiguration : IEntityTypeConfiguration<EventE
         builder.ToTable("Events");
 
         builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.Id);
 
         builder
             .Property(x => x.Name)
@@ -33,5 +32,7 @@ internal sealed class EventEntityConfiguration : IEntityTypeConfiguration<EventE
             .WithMany()
             .HasForeignKey(x => x.VenueId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasData(Events.DefaultEvents);
     }
 }

@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TicketingSystem.DataAccess.Entities;
+using TicketingSystem.DataAccess.SeedData;
 
 namespace TicketingSystem.DataAccess.EntityConfigurations;
 
@@ -21,5 +22,7 @@ internal sealed class VenueEntityConfiguration : IEntityTypeConfiguration<VenueE
             .Property(x => x.Location)
             .IsRequired()
             .HasMaxLength(DbConstants.ShortTextMaxLength);
+
+        builder.HasData(Venues.DefaultVenues);
     }
 }

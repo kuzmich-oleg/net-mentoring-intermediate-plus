@@ -2,7 +2,7 @@
 using TicketingSystem.Common.Extensions;
 using TicketingSystem.DataAccess.Entities;
 using TicketingSystem.DataAccess.Mappers;
-using TicketingSystem.Domain.Interfaces.Repositories;
+using TicketingSystem.Application.Interfaces.Repositories;
 using TicketingSystem.Domain.Models;
 
 namespace TicketingSystem.DataAccess.Repositories.Offers;
@@ -23,6 +23,7 @@ internal sealed class OfferReadRepository : IOfferReadRepository
     {
         var offerEntity = await ActiveOffers
             .AsNoTracking()
+            .AsSplitQuery()
             .Include(x => x.Seat)
                 .ThenInclude(x => x!.SectionRow)
                 .ThenInclude(x => x!.Section)
@@ -33,5 +34,28 @@ internal sealed class OfferReadRepository : IOfferReadRepository
 
         var offerModel = offerEntity.MapIfNotNull(OfferMapper.FromEntity);
         return offerModel;
+    }
+
+    public async Task<IReadOnlyCollection<Offer>> GetEventOffersAsync(Guid eventId, Guid? sectionId,
+        CancellationToken cancellationToken)
+    {
+        var query = ActiveOffers
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(x => x.Seat)
+                .ThenInclude(x => x!.SectionRow)
+                .ThenInclude(x => x!.Section)
+            .Include(x => x.SeatPriceLevel)
+            .Where(x => x.EventId == eventId);
+
+        if (sectionId.HasValue)
+        {
+            query = query.Where(x => x.Seat!.SectionRow!.SectionId == sectionId.Value);
+        }
+
+        var offerEntities = await query.ToListAsync(cancellationToken);
+        var offerModels = offerEntities.MapToList(OfferMapper.FromEntity);
+
+        return offerModels;
     }
 }

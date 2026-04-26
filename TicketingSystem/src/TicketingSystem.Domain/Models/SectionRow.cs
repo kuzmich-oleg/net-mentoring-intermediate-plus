@@ -1,4 +1,4 @@
-namespace TicketingSystem.Domain.Models;
+﻿namespace TicketingSystem.Domain.Models;
 
 public sealed record SectionRow : DomainModelBase
 {
@@ -7,4 +7,6 @@ public sealed record SectionRow : DomainModelBase
     public required string Code { get; set; }
 
     public Section? Section { get; set; }
+
+    public IList<Seat> Seats { get; set; } = [];
 }
