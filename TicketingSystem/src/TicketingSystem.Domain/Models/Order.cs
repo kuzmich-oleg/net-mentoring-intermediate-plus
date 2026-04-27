@@ -1,6 +1,6 @@
 ﻿namespace TicketingSystem.Domain.Models;
 
-public sealed record Order
+public sealed record Order : DomainModelBase
 {
     public Guid CustomerId { get; set; }
 

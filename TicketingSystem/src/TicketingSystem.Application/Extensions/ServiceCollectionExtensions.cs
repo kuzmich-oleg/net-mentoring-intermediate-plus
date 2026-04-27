@@ -5,6 +5,7 @@ using TicketingSystem.Application.Interfaces.Services.Queries;
 using TicketingSystem.Application.Services;
 using TicketingSystem.Application.Services.Events;
 using TicketingSystem.Application.Services.Orders;
+using TicketingSystem.Application.Services.Payments;
 using TicketingSystem.Application.Services.Venues;
 
 namespace TicketingSystem.Application.Extensions;
@@ -25,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IVenueQueryService, VenueQueryService>();
         services.AddScoped<IEventQueryService, EventQueryService>();
         services.AddScoped<IOrderQueryService, OrderQueryService>();
+        services.AddScoped<IPaymentQueryService, PaymentQueryService>();
 
         services.AddScoped<IOrderCommandService, OrderCommandService>();
 

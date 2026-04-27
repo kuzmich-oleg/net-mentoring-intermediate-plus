@@ -4,5 +4,5 @@ public enum CartStatus
 {
     Created = 1,
 
-    OrdersPlaced = 2
+    OrderPlaced = 2
 }

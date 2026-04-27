@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TicketingSystem.Application.Interfaces.Services.Commands;
 using TicketingSystem.Application.Interfaces.Services.Queries;
+using TicketingSystem.Application.Services.Orders.Models;
+using TicketingSystem.Common.Extensions;
 using TicketingSystem.WebAPI.Models.Mappers;
 using TicketingSystem.WebAPI.Models.Orders;
 
@@ -27,36 +28,66 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOrderCartAsync(Guid cartId, CancellationToken cancellationToken)
     {
-        var cart = await _orderQueryService.GetCartAsync(cartId, cancellationToken);
+        var cartResponse = await GetCartResponseAsync(cartId, cancellationToken);
 
-        if (cart is null)
-            return NotFound();
-
-        var cartResponse = CartMapper.ToResponse(cart);
-
-        return Ok(cartResponse);
+        return cartResponse is null
+            ? NotFound()
+            : Ok(cartResponse);
     }
 
     [HttpPost("carts/{cartId}")]
     [ProducesResponseType<CartResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateCartAsync(
         [FromRoute] Guid cartId,
         [FromBody] CartCreationRequest request,
         CancellationToken cancellationToken)
     {
         var command = request.ToCommand(cartId);
-        var result = await _orderCommandService.CreateCartAsync(command, cancellationToken);
+        var result = await _orderCommandService.UpsertCartAsync(command, cancellationToken);
 
         if (result is null)
             return BadRequest();
 
-        var cart = await _orderQueryService.GetCartAsync(result.Value, cancellationToken);
+        var cartResponse = await GetCartResponseAsync(cartId, cancellationToken);
 
-        if (cart is null)
-            return BadRequest();
+        return cartResponse is null
+            ? NotFound()
+            : CreatedAtRoute("GetOrderCart", new { cartId }, cartResponse);
+    }
 
-        var cartResponse = CartMapper.ToResponse(cart);
-        return CreatedAtRoute("GetOrderCart", new { cartId }, cartResponse);
+    [HttpPut("carts/{cartId}/book")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> BookCartAsync(Guid cartId, CancellationToken cancellationToken)
+    {
+        var result = await _orderCommandService.CreateOrderAsync(cartId, cancellationToken);
+
+        return result.HasValue 
+            ? Ok(new { PaymentId = result.Value })
+            : BadRequest();
+    }
+
+    [HttpDelete("carts/{cartId}/events/{eventId}/seats/{seatId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteCartAsync(Guid cartId, Guid eventId, Guid seatId,
+        CancellationToken cancellationToken)
+    {
+        var deleteCommand = new DeleteCartItemCommand(cartId, eventId, seatId);
+
+        var result = await _orderCommandService.DeleteCartItemAsync(deleteCommand, cancellationToken);
+
+        return !result ? BadRequest() : NoContent();
+    }
+
+    private async Task<CartResponse?> GetCartResponseAsync(Guid cartId, CancellationToken cancellationToken)
+    {
+        var cart = await _orderQueryService.GetCartAsync(cartId, cancellationToken);
+
+        var response = cart.MapIfNotNull(CartMapper.ToResponse);
+
+        return response;
     }
 }

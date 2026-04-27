@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TicketingSystem.DataAccess.Repositories.Customers;
 using TicketingSystem.DataAccess.Repositories.EventManagers;
 using TicketingSystem.DataAccess.Repositories.Events;
+using TicketingSystem.DataAccess.Repositories.Payments;
 using TicketingSystem.DataAccess.Repositories.SectionRows;
 using TicketingSystem.DataAccess.Repositories.Sections;
 using TicketingSystem.DataAccess.Repositories.SeatPriceLevels;
@@ -15,6 +16,7 @@ using TicketingSystem.DataAccess.Repositories.Users;
 using TicketingSystem.DataAccess.Repositories.Venues;
 using TicketingSystem.Application.Interfaces.Repositories;
 using TicketingSystem.DataAccess.Repositories.Carts;
+using TicketingSystem.DataAccess.Repositories.Orders;
 
 namespace TicketingSystem.DataAccess.Extensions;
 
@@ -89,6 +91,10 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ICartReadRepository, CartReadRepository>();
         services.AddScoped<ICartWriteRepository, CartWriteRepository>();
+
+        services.AddScoped<IOrderReadRepository, OrderReadRepository>();
+        services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
+        services.AddScoped<IPaymentReadRepository, PaymentReadRepository>();
 
         return services;
     }

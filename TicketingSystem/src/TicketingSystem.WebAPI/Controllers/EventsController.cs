@@ -46,6 +46,7 @@ public class EventsController : ControllerBase
             return NotFound();
 
         var responseItems = offers.MapToArray(EventSeatOfferMapper.ToResponse);
+
         return Ok(responseItems);
     }
 }

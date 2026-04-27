@@ -36,8 +36,29 @@ internal sealed class OfferWriteRepository : IOfferWriteRepository
             return false;
 
         offerEntity.Price = offerModel.Price;
+        offerEntity.SeatStatus = offerModel.SeatStatus;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
+
+    public async Task<bool> UpdateSeatStatusAsync(Guid[] offerIds, SeatStatus seatStatus,
+        CancellationToken cancellationToken)
+    {
+        if (offerIds == null || offerIds.Length == 0)
+            return false;
+
+        var offerEntities = await _dbContext.Offers
+            .Where(x => offerIds.Contains(x.Id) && !x.IsDeleted)
+            .ToListAsync(cancellationToken);
+
+        if (offerEntities.Count != offerIds.Length)
+            return false;
+
+        await _dbContext.Offers
+            .Where(x => offerIds.Contains(x.Id) && !x.IsDeleted)
+            .ExecuteUpdateAsync(x => x.SetProperty(p => p.SeatStatus, seatStatus));
 
         return true;
     }

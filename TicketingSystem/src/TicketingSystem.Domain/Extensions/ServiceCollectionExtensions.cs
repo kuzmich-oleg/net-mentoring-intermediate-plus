@@ -9,7 +9,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterDomain(this IServiceCollection services)
     {
         //TODO: consider moving to separate method
-        services.AddScoped<ICartCreationService, CartCreationService>();
+        services.AddScoped<IOrdersService, OrdersService>();
 
         return services;
     }

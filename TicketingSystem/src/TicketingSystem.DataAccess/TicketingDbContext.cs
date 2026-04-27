@@ -21,6 +21,9 @@ public sealed class TicketingDbContext(DbContextOptions<TicketingDbContext> opti
     internal DbSet<OfferEntity> Offers => Set<OfferEntity>();
     internal DbSet<TicketEntity> Tickets => Set<TicketEntity>();
     internal DbSet<CartEntity> Carts => Set<CartEntity>();
+    internal DbSet<CartItemEntity> CartItems => Set<CartItemEntity>();
+    internal DbSet<OrderEntity> Orders => Set<OrderEntity>();
+    internal DbSet<PaymentEntity> Payments => Set<PaymentEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
