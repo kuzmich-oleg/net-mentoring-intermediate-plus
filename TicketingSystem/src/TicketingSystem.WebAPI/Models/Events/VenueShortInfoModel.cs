@@ -7,4 +7,6 @@ public sealed record VenueShortInfoModel
     public required string Name { get; set; }
 
     public required string Location { get; set; }
+
+    public SectionResponse[] Sections { get; set; } = [];
 }

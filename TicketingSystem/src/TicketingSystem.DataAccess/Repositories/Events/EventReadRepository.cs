@@ -44,6 +44,7 @@ internal sealed class EventReadRepository : IEventReadRepository
         var query = ActiveEvents
             .AsNoTracking()
             .Include(x => x.Venue)
+                .ThenInclude(x => x!.Sections.Where(x => !x.IsDeleted))
             .AsQueryable();
 
         if (eventDate.HasValue)

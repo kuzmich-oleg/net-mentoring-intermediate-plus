@@ -58,14 +58,14 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("carts/{cartId}/book")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<CartBookingResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> BookCartAsync(Guid cartId, CancellationToken cancellationToken)
     {
         var result = await _orderCommandService.CreateOrderAsync(cartId, cancellationToken);
 
         return result.HasValue 
-            ? Ok(new { PaymentId = result.Value })
+            ? Ok(new CartBookingResponse { PaymentId = result.Value })
             : BadRequest();
     }
 

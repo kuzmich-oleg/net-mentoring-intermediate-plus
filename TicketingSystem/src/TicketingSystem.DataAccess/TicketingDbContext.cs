@@ -4,26 +4,26 @@ using TicketingSystem.DataAccess.Entities.Abstractions;
 
 namespace TicketingSystem.DataAccess;
 
-public sealed class TicketingDbContext(DbContextOptions<TicketingDbContext> options)
+public class TicketingDbContext(DbContextOptions<TicketingDbContext> options)
     : DbContext(options)
 {
     public const string SchemaName = "Ticketing";
 
-    internal DbSet<UserEntity> Users => Set<UserEntity>();
-    internal DbSet<EventManagerEntity> EventManagers => Set<EventManagerEntity>();
-    internal DbSet<CustomerEntity> Customers => Set<CustomerEntity>();
-    internal DbSet<EventEntity> Events => Set<EventEntity>();
-    internal DbSet<VenueEntity> Venues => Set<VenueEntity>();
-    internal DbSet<SectionEntity> Sections => Set<SectionEntity>();
-    internal DbSet<SectionRowEntity> SectionRows => Set<SectionRowEntity>();
-    internal DbSet<SeatEntity> Seats => Set<SeatEntity>();
-    internal DbSet<SeatPriceLevelEntity> SeatPriceLevels => Set<SeatPriceLevelEntity>();
-    internal DbSet<OfferEntity> Offers => Set<OfferEntity>();
-    internal DbSet<TicketEntity> Tickets => Set<TicketEntity>();
-    internal DbSet<CartEntity> Carts => Set<CartEntity>();
-    internal DbSet<CartItemEntity> CartItems => Set<CartItemEntity>();
-    internal DbSet<OrderEntity> Orders => Set<OrderEntity>();
-    internal DbSet<PaymentEntity> Payments => Set<PaymentEntity>();
+    internal virtual DbSet<UserEntity> Users => Set<UserEntity>();
+    internal virtual DbSet<EventManagerEntity> EventManagers => Set<EventManagerEntity>();
+    internal virtual DbSet<CustomerEntity> Customers => Set<CustomerEntity>();
+    internal virtual DbSet<EventEntity> Events => Set<EventEntity>();
+    internal virtual DbSet<VenueEntity> Venues => Set<VenueEntity>();
+    internal virtual DbSet<SectionEntity> Sections => Set<SectionEntity>();
+    internal virtual DbSet<SectionRowEntity> SectionRows => Set<SectionRowEntity>();
+    internal virtual DbSet<SeatEntity> Seats => Set<SeatEntity>();
+    internal virtual DbSet<SeatPriceLevelEntity> SeatPriceLevels => Set<SeatPriceLevelEntity>();
+    internal virtual DbSet<OfferEntity> Offers => Set<OfferEntity>();
+    internal virtual DbSet<TicketEntity> Tickets => Set<TicketEntity>();
+    internal virtual DbSet<CartEntity> Carts => Set<CartEntity>();
+    internal virtual DbSet<CartItemEntity> CartItems => Set<CartItemEntity>();
+    internal virtual DbSet<OrderEntity> Orders => Set<OrderEntity>();
+    internal virtual DbSet<PaymentEntity> Payments => Set<PaymentEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

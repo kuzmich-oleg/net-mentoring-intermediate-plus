@@ -98,4 +98,17 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    public static void RunDbInitializer(this IServiceProvider serviceProvider, IConfiguration configuration)
+    {
+        using var scope = serviceProvider.CreateScope();
+
+        var context = scope.ServiceProvider.GetRequiredService<TicketingDbContext>();
+        var needToApply = configuration.GetValue<bool>("DataBase:ApplyMigrations");
+        
+        var pendingMigrations = context.Database.GetPendingMigrations().ToArray();
+
+        if (needToApply && pendingMigrations.Length != 0)
+            context.Database.Migrate();
+    }
 }
