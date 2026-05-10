@@ -12,14 +12,14 @@ namespace TicketingSystem.WebAPI.Controllers;
 public class PaymentsController : ControllerBase
 {
     private readonly IPaymentQueryService _paymentQueryService;
-    private readonly IOrderCommandService _orderCommandService;
+    private readonly IPaymentCommandService _paymentCommandService;
 
     public PaymentsController(
         IPaymentQueryService paymentQueryService,
-        IOrderCommandService orderCommandService)
+        IPaymentCommandService paymentCommandService)
     {
         _paymentQueryService = paymentQueryService;
-        _orderCommandService = orderCommandService;
+        _paymentCommandService = paymentCommandService;
     }
 
     [HttpGet("{id}")]
@@ -39,7 +39,7 @@ public class PaymentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CompletePaymentAsync(Guid id, CancellationToken cancellationToken)
     {
-        var isUpdated = await _orderCommandService.CompletePaymentAsync(id, cancellationToken);
+        var isUpdated = await _paymentCommandService.CompletePaymentAsync(id, cancellationToken);
 
         return isUpdated ? NoContent() : BadRequest();
     }
@@ -49,7 +49,7 @@ public class PaymentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RejectPaymentAsync(Guid id, CancellationToken cancellationToken)
     {
-        var isUpdated = await _orderCommandService.RejectPaymentAsync(id, cancellationToken);
+        var isUpdated = await _paymentCommandService.RejectPaymentAsync(id, cancellationToken);
 
         return isUpdated ? NoContent() : BadRequest();
     }

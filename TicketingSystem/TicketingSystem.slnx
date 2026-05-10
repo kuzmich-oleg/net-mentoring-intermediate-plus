@@ -7,12 +7,13 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="tests/TicketingSystem.DataAccess.UnitTests/TicketingSystem.DataAccess.UnitTests.csproj" />
-    <Project Path="tests/TicketingSystem.WebAPI.UnitTests/TicketingSystem.WebAPI.UnitTests.csproj" />
     <Project Path="tests/TicketingSystem.WebAPI.IntegrationTests/TicketingSystem.WebAPI.IntegrationTests.csproj" />
+    <Project Path="tests/TicketingSystem.WebAPI.UnitTests/TicketingSystem.WebAPI.UnitTests.csproj" />
   </Folder>
   <Project Path="src/TicketingSystem.Application/TicketingSystem.Application.csproj" />
   <Project Path="src/TicketingSystem.Common/TicketingSystem.Common.csproj" />
   <Project Path="src/TicketingSystem.DataAccess/TicketingSystem.DataAccess.csproj" />
   <Project Path="src/TicketingSystem.Domain/TicketingSystem.Domain.csproj" />
+  <Project Path="src/TicketingSystem.Infrastructure/TicketingSystem.Infrastructure.csproj" Id="9da0762f-0766-4a57-9e55-69772e6d8dd2" />
   <Project Path="src/TicketingSystem.WebAPI/TicketingSystem.WebAPI.csproj" />
 </Solution>

@@ -19,6 +19,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet]
+    [ResponseCache(Duration = 10, VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Any)]
     [ProducesResponseType<PagedResult<EventResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetEventsAsync(
         [FromQuery] EventsSearchRequest searchRequest,
@@ -36,6 +37,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet("{id}/sections/{sectionId}/seats")]
+    [ResponseCache(Duration = 10, Location = ResponseCacheLocation.Any)]
     [ProducesResponseType<EventSeatOfferResponse[]>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetEventSeatsAsync(Guid id, Guid sectionId, CancellationToken cancellationToken)

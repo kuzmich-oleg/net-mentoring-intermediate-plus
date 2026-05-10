@@ -96,7 +96,7 @@ public sealed class OfferReadRepositoryTests : IDisposable
         var nonExistingId = Guid.NewGuid();
 
         // Act
-        var result = await _repository.GetEventOffersAsync(nonExistingId, null, CancellationToken.None);
+        var result = await _repository.GetEventOffersAsync(nonExistingId, null, cancellationToken: CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -113,6 +113,7 @@ public sealed class OfferReadRepositoryTests : IDisposable
         {
             Id = Guid.NewGuid(),
             Price = 10m,
+            SeatStatus = SeatStatus.Available,
             SeatPriceLevel = new SeatPriceLevelEntity { Id = Guid.NewGuid(), PriceLevel = SeatPriceLevel.Adult },
             Seat = new SeatEntity
             {
@@ -147,7 +148,7 @@ public sealed class OfferReadRepositoryTests : IDisposable
         await _dbContext.SaveChangesAsync(default);
 
         // Act
-        var result = await _repository.GetEventOffersAsync(existingEventId, null, CancellationToken.None);
+        var result = await _repository.GetEventOffersAsync(existingEventId, null, cancellationToken: CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -173,6 +174,7 @@ public sealed class OfferReadRepositoryTests : IDisposable
         {
             Id = Guid.NewGuid(),
             Price = 10m,
+            SeatStatus = SeatStatus.Available,
             SeatPriceLevel = new SeatPriceLevelEntity { Id = Guid.NewGuid(), PriceLevel = SeatPriceLevel.Adult },
             Seat = new SeatEntity
             {
@@ -207,7 +209,7 @@ public sealed class OfferReadRepositoryTests : IDisposable
         await _dbContext.SaveChangesAsync(default);
 
         // Act
-        var result = await _repository.GetEventOffersAsync(existingEventId, existingSectionid, CancellationToken.None);
+        var result = await _repository.GetEventOffersAsync(existingEventId, existingSectionid, cancellationToken: CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);

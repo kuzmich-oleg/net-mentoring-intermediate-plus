@@ -14,10 +14,10 @@ internal sealed class OrderCommandService : IOrderCommandService
     private readonly IOfferReadRepository _offerReadRepo;
     private readonly IOfferWriteRepository _offerWriteRepo;
     private readonly IOrderWriteRepository _orderWriteRepo;
-    private readonly IOrderReadRepository _orderReadRepo;
 
     private readonly ICurrentCustomerProvider _currentCustomerProvider;
     private readonly IOrdersService _ordersService;
+    private readonly ICacheService _cacheService;
 
     public OrderCommandService(
         ICartWriteRepository cartWriteRepo,
@@ -25,18 +25,18 @@ internal sealed class OrderCommandService : IOrderCommandService
         IOfferReadRepository offerReadRepo,
         IOfferWriteRepository offerWriteRepo,
         IOrderWriteRepository orderWriteRepo,
-        IOrderReadRepository orderReadRepo,
         ICurrentCustomerProvider currentCustomerProvider,
-        IOrdersService ordersService)
+        IOrdersService ordersService,
+        ICacheService cacheService)
     {
         _cartWriteRepo = cartWriteRepo;
         _cartReadRepo = cartReadRepo;
         _offerReadRepo = offerReadRepo;
         _offerWriteRepo = offerWriteRepo;
         _orderWriteRepo = orderWriteRepo;
-        _orderReadRepo = orderReadRepo;
         _currentCustomerProvider = currentCustomerProvider;
         _ordersService = ordersService;
+        _cacheService = cacheService;
     }
 
     public async Task<Guid?> UpsertCartAsync(CreateCartCommand command, CancellationToken cancellationToken)
@@ -89,42 +89,11 @@ internal sealed class OrderCommandService : IOrderCommandService
         if (!isCartUpdated || !areOffersUpdated)
             return null;
 
+        await RemoveSeatsRelatedCacheEntriesAsync(cart, cancellationToken);
+        
         _ = await _orderWriteRepo.AddAsync(order, cancellationToken);
 
         return order.Payments.FirstOrDefault()?.Id;
-    }
-
-    public async Task<bool> CompletePaymentAsync(Guid paymentId, CancellationToken cancellationToken)
-    {
-        var order = await _orderReadRepo.GetByPaymentIdAsync(paymentId, cancellationToken);
-
-        if (!CanModifyOrder(order))
-            return false;
-
-        var completionResult = _ordersService.CompleteOrderPayment(order!, paymentId);
-
-        if (!completionResult)
-            return false;
-
-        var updateResult = await UpdateOrderStatusAsync(completionResult, order!,
-            SeatStatus.Available, cancellationToken);
-
-        return updateResult;
-    }
-
-    public async Task<bool> RejectPaymentAsync(Guid paymentId, CancellationToken cancellationToken)
-    {
-        var order = await _orderReadRepo.GetByPaymentIdAsync(paymentId, cancellationToken);
-
-        if (!CanModifyOrder(order))
-            return false;
-
-        var rejectionResult = _ordersService.RejectOrderPayment(order!, paymentId);
-
-        var updateResult = await UpdateOrderStatusAsync(rejectionResult, order!,
-            SeatStatus.Available, cancellationToken);
-
-        return updateResult;
     }
 
     public async Task<bool> DeleteCartItemAsync(DeleteCartItemCommand command, CancellationToken cancellationToken)
@@ -146,22 +115,30 @@ internal sealed class OrderCommandService : IOrderCommandService
         return true;
     }
 
-    private async Task<bool> UpdateOrderStatusAsync(bool isOperationCompeted, Order order,
-        SeatStatus defaultSeatStatus, CancellationToken cancellationToken)
+    private async Task RemoveSeatsRelatedCacheEntriesAsync(Cart cart, CancellationToken cancellationToken)
     {
-        if (!isOperationCompeted)
-            return false;
+        var removeCacheEntryTasks = new List<Task>(cart.Items.Count);
+        var eventSections = cart.Items
+            .GroupBy(
+                x => x.Offer?.EventId,
+                v => v.Offer?.Seat?.SectionRow?.SectionId,
+                (key, values) => (eventId: key, sectionsIds: values.Distinct()));
 
-        var isOrderUpdated = await _orderWriteRepo.UpdateAsync(order!, cancellationToken);
-        var seatStatus = order!.Cart!.Items
-            .FirstOrDefault()?.Offer?.SeatStatus ?? defaultSeatStatus;
+        foreach (var (eventId, sectionIds) in eventSections)
+        {
+            foreach (var sectionId in sectionIds)
+            {
+                if (eventId is null || sectionId is null)
+                    continue;
 
-        var areOffersUpdated = await _offerWriteRepo.UpdateSeatStatusAsync(
-            [.. order.Cart!.Items.Select(x => x.OfferId)],
-            seatStatus,
-            cancellationToken);
+                var offersCacheKey = CacheKeyHelper.GetSectionOffersCacheKey(eventId.Value, sectionId.Value);
+                var removeCacheEntryTask = _cacheService.RemoveAsync(offersCacheKey, cancellationToken);
 
-        return isOrderUpdated && areOffersUpdated;
+                removeCacheEntryTasks.Add(removeCacheEntryTask);
+            }
+        }
+
+        await Task.WhenAll(removeCacheEntryTasks);
     }
 
     private static bool TryGetCartItem(Cart cart, Guid eventId, Guid seatId, out CartItem? item)
@@ -172,7 +149,4 @@ internal sealed class OrderCommandService : IOrderCommandService
 
         return item is not null;
     }
-
-    private static bool CanModifyOrder(Order? order)
-        => order is not null;
 }

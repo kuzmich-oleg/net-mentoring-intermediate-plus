@@ -25,6 +25,7 @@ internal sealed class CartReadRepository : ICartReadRepository
             .Include(x => x.Items.Where(i => !i.IsDeleted))
                 .ThenInclude(x => x.Offer)
                 .ThenInclude(x => x!.Seat)
+                .ThenInclude(x => x!.SectionRow)
             .Include(x => x.Items.Where(i => !i.IsDeleted))
                 .ThenInclude(x => x.Offer)
                 .ThenInclude(x => x!.SeatPriceLevel)

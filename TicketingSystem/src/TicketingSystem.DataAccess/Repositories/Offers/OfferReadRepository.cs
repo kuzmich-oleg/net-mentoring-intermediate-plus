@@ -37,7 +37,7 @@ internal sealed class OfferReadRepository : IOfferReadRepository
     }
 
     public async Task<IReadOnlyCollection<Offer>> GetEventOffersAsync(Guid eventId, Guid? sectionId,
-        CancellationToken cancellationToken)
+        SeatStatus? seatStatus = SeatStatus.Available, CancellationToken cancellationToken = default)
     {
         var query = ActiveOffers
             .AsNoTracking()
@@ -51,6 +51,11 @@ internal sealed class OfferReadRepository : IOfferReadRepository
         if (sectionId.HasValue)
         {
             query = query.Where(x => x.Seat!.SectionRow!.SectionId == sectionId.Value);
+        }
+
+        if (seatStatus.HasValue)
+        {
+            query = query.Where(x => x.SeatStatus == seatStatus.Value);
         }
 
         var offerEntities = await query.ToListAsync(cancellationToken);

@@ -6,5 +6,6 @@ public interface IOfferReadRepository
 {
     Task<Offer?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
-    Task<IReadOnlyCollection<Offer>> GetEventOffersAsync(Guid eventId, Guid? sectionId, CancellationToken cancellationToken);
+    Task<IReadOnlyCollection<Offer>> GetEventOffersAsync(Guid eventId, Guid? sectionId,
+        SeatStatus? seatStatus = SeatStatus.Available, CancellationToken cancellationToken = default);
 }

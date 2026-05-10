@@ -11,13 +11,13 @@ namespace TicketingSystem.WebAPI.UnitTests.Controllers;
 public sealed class PaymentsControllerTests
 {
     private readonly Mock<IPaymentQueryService> _queryServiceMock;
-    private readonly Mock<IOrderCommandService> _commandServiceMock;
+    private readonly Mock<IPaymentCommandService> _commandServiceMock;
     private readonly PaymentsController _controller;
 
     public PaymentsControllerTests()
     {
         _queryServiceMock = new Mock<IPaymentQueryService>();
-        _commandServiceMock = new Mock<IOrderCommandService>();
+        _commandServiceMock = new Mock<IPaymentCommandService>();
         _controller = new PaymentsController(_queryServiceMock.Object, _commandServiceMock.Object);
     }
 

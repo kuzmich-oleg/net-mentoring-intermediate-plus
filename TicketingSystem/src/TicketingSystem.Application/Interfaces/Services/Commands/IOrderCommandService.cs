@@ -14,9 +14,5 @@ public interface IOrderCommandService
 
     Task<Guid?> CreateOrderAsync(Guid cartId, CancellationToken cancellationToken);
 
-    Task<bool> CompletePaymentAsync(Guid paymentId, CancellationToken cancellationToken);
-
-    Task<bool> RejectPaymentAsync(Guid paymentId, CancellationToken cancellationToken);
-
     Task<bool> DeleteCartItemAsync(DeleteCartItemCommand command, CancellationToken cancellationToken);
 }

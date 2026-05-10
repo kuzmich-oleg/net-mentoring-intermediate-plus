@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPaymentQueryService, PaymentQueryService>();
 
         services.AddScoped<IOrderCommandService, OrderCommandService>();
+        services.AddScoped<IPaymentCommandService, PaymentCommandService>();
 
         return services;
     }
