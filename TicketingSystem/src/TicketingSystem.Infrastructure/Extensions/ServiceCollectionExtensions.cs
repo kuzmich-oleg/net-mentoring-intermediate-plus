@@ -1,8 +1,13 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
+﻿using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using TicketingSystem.Application.Interfaces.Services;
+using TicketingSystem.Common.Configurations;
+using TicketingSystem.Common.Configurations.Extensions;
 using TicketingSystem.Infrastructure.Cache;
+using TicketingSystem.Infrastructure.Notifications;
 
 namespace TicketingSystem.Infrastructure.Extensions;
 
@@ -20,6 +25,8 @@ public static class ServiceCollectionExtensions
         AddDistributedPostgresCache(services, configuration);
 
         AddHybridCache(services, configuration);
+
+        AddServiceBus(services);
 
         return services;
     }
@@ -54,5 +61,19 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<ICacheService, CacheService>();
+    }
+
+    public static void AddServiceBus(this IServiceCollection services)
+    {
+        services.RegisterConfiguration<ServiceBusConfiguration>();
+
+        services.AddScoped<INotificationService, NotificationService>();
+        
+        services.AddSingleton(provider =>
+        {
+            var serviceBusConfig = provider.GetRequiredService<IOptions<ServiceBusConfiguration>>().Value;
+            
+            return new ServiceBusClient(serviceBusConfig.ConnectionString);
+        });
     }
 }

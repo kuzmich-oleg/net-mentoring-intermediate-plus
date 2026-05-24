@@ -1,6 +1,9 @@
 ﻿using Alba;
 using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using TicketingSystem.Application.Interfaces.Services;
 
 namespace TicketingSystem.WebAPI.IntegrationTests;
 
@@ -32,6 +35,12 @@ public class WebAppFixture : IAsyncLifetime
         Host = await AlbaHost.For<Program>(builder =>
         {
             builder.UseEnvironment(EnvironmentName);
+
+            builder.ConfigureServices(services =>
+            {
+                var notificationServiceMock = new Mock<INotificationService>();
+                services.AddScoped(_ => notificationServiceMock.Object);
+            });
         });
 
         await Host.StartAsync();

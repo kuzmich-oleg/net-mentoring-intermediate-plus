@@ -15,5 +15,6 @@
   <Project Path="src/TicketingSystem.DataAccess/TicketingSystem.DataAccess.csproj" />
   <Project Path="src/TicketingSystem.Domain/TicketingSystem.Domain.csproj" />
   <Project Path="src/TicketingSystem.Infrastructure/TicketingSystem.Infrastructure.csproj" Id="9da0762f-0766-4a57-9e55-69772e6d8dd2" />
+  <Project Path="src/TicketingSystem.Notifications/TicketingSystem.Notifications.csproj" Id="da6ed7cc-1d73-442b-a34d-6874b77fee89" />
   <Project Path="src/TicketingSystem.WebAPI/TicketingSystem.WebAPI.csproj" />
 </Solution>

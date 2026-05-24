@@ -1,5 +1,7 @@
 ﻿using TicketingSystem.Application.Interfaces.Repositories;
+using TicketingSystem.Application.Interfaces.Services;
 using TicketingSystem.Application.Interfaces.Services.Commands;
+using TicketingSystem.Common.Events;
 using TicketingSystem.Domain.Interfaces.Services;
 using TicketingSystem.Domain.Models;
 
@@ -12,17 +14,20 @@ internal sealed class PaymentCommandService : IPaymentCommandService
     private readonly IOrderWriteRepository _orderWriteRepo;
 
     private readonly IOrdersService _ordersService;
+    private readonly INotificationService _notificationService;
 
     public PaymentCommandService(
         IOrderReadRepository orderReadRepo,
         IOfferWriteRepository offerWriteRepo,
         IOrderWriteRepository orderWriteRepo,
-        IOrdersService ordersService)
+        IOrdersService ordersService,
+        INotificationService notificationService)
     {
         _orderReadRepo = orderReadRepo;
         _offerWriteRepo = offerWriteRepo;
         _orderWriteRepo = orderWriteRepo;
         _ordersService = ordersService;
+        _notificationService = notificationService;
     }
 
     public async Task<bool> CompletePaymentAsync(Guid paymentId, CancellationToken cancellationToken)
@@ -39,6 +44,11 @@ internal sealed class PaymentCommandService : IPaymentCommandService
 
         var updateResult = await UpdateOrderStatusAsync(completionResult, order!,
             SeatStatus.Available, cancellationToken);
+
+        if (updateResult)
+        {
+            await SendPaymentCompletedEventAsync(paymentId, cancellationToken);
+        }
 
         return updateResult;
     }
@@ -74,6 +84,18 @@ internal sealed class PaymentCommandService : IPaymentCommandService
             cancellationToken);
 
         return isOrderUpdated && areOffersUpdated;
+    }
+
+    private async Task SendPaymentCompletedEventAsync(Guid paymentId, CancellationToken cancellationToken)
+    {
+        var paymentCompletedEvent = new PaymentCompletedEvent
+        {
+            PaymentId = paymentId,
+            CustomerEmail = "kuzmicholeg1@gmail.com"
+        };
+
+        await _notificationService.PublishEventAsync(paymentCompletedEvent, EventType.PaymentCompleted,
+            cancellationToken);
     }
 
     private static bool CanModifyOrder(Order? order)
