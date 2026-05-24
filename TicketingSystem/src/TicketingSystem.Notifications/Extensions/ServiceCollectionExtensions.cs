@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Mailjet.Client;
 using Microsoft.Extensions.Options;
+using Polly;
 using TicketingSystem.Common.Configurations;
 using TicketingSystem.Common.Configurations.Extensions;
 using TicketingSystem.Notifications.EmailService;
@@ -28,7 +29,9 @@ public static class ServiceCollectionExtensions
             client.SetDefaultSettings();
 
             client.UseBasicAuthentication(emailConfig.ApiKey, emailConfig.ApiSecret);
-        });
+        })
+        .AddTransientHttpErrorPolicy(policy =>
+            policy.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
 
         services.AddSingleton<IEmailService, EmailService.EmailService>();
 
