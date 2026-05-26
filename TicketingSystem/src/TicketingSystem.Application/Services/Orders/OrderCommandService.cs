@@ -42,8 +42,10 @@ internal sealed class OrderCommandService : IOrderCommandService
     public async Task<Guid?> UpsertCartAsync(CreateCartCommand command, CancellationToken cancellationToken)
     {
         var offer = await _offerReadRepo.GetByIdAsync(command.OfferId, cancellationToken);
+        var isOfferInOtherCart = await _cartReadRepo.ExistAsync(command.OfferId, [CartStatus.OrderPlaced],
+            cancellationToken);
 
-        if (offer is null)
+        if (offer is null || isOfferInOtherCart)
             return null;
 
         var cart = await _cartReadRepo.GetByIdAsync(command.CartId, cancellationToken);
@@ -83,6 +85,7 @@ internal sealed class OrderCommandService : IOrderCommandService
 
         var areOffersUpdated = await _offerWriteRepo.UpdateSeatStatusAsync(
             [.. cart!.Items.Select(x => x.OfferId)],
+            expectedCurrentStatus: SeatStatus.Available,
             seatStatus,
             cancellationToken);
 

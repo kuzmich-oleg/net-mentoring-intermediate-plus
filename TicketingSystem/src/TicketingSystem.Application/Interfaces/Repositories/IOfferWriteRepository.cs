@@ -25,11 +25,13 @@ public interface IOfferWriteRepository
     /// Asynchronously updates the status of seats associated with the specified offer identifiers.
     /// </summary>
     /// <param name="offerIds">An array of offer identifiers for which the seat status will be updated. Cannot be null or empty.</param>
+    /// <param name="expectedCurrentStatus">The expected current status of the seats. Only seats with this status will be updated.</param>
     /// <param name="seatStatus">The new status to apply to the seats associated with the specified offers.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>A task that represents the asynchronous operation. The task result is true if the seat statuses were
     /// successfully updated for all specified offers; otherwise, false.</returns>
-    Task<bool> UpdateSeatStatusAsync(Guid[] offerIds, SeatStatus seatStatus, CancellationToken cancellationToken);
+    Task<bool> UpdateSeatStatusAsync(Guid[] offerIds, SeatStatus expectedCurrentStatus,
+        SeatStatus seatStatus, CancellationToken cancellationToken);
 
     /// <summary>
     /// Asynchronously deletes the offer with the specified unique identifier.

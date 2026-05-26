@@ -80,6 +80,7 @@ internal sealed class PaymentCommandService : IPaymentCommandService
 
         var areOffersUpdated = await _offerWriteRepo.UpdateSeatStatusAsync(
             [.. order.Cart!.Items.Select(x => x.OfferId)],
+            expectedCurrentStatus: SeatStatus.Booked,
             seatStatus,
             cancellationToken);
 

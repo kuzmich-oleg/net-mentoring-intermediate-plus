@@ -39,4 +39,13 @@ internal sealed class CartReadRepository : ICartReadRepository
 
     public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
        =>  await ActiveCarts.AnyAsync(x => x.Id == id, cancellationToken);
+
+    public async Task<bool> ExistAsync(Guid offerId, CartStatus[] statuses, CancellationToken cancellationToken)
+    {
+        return await ActiveCarts
+            .AnyAsync(x =>
+                x.Items.Any(i => i.OfferId == offerId)
+                    && statuses.Contains(x.Status),
+                cancellationToken);
+    }
 }
